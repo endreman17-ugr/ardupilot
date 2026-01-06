@@ -57,7 +57,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Units: cm
     // @Range: 0.0 1000.0
     // @Increment: 10
-    GSCALAR(pilot_takeoff_alt,  "PILOT_TKOFF_ALT",  PILOT_TKOFF_ALT_DEFAULT),
+    GSCALAR(pilot_takeoff_alt_cm,  "PILOT_TKOFF_ALT",  PILOT_TKOFF_ALT_DEFAULT),
 
     // @Param: PILOT_THR_BHV
     // @DisplayName: Throttle stick behavior
@@ -83,12 +83,12 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 30 300000
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_altitude,   "RTL_ALT",     RTL_ALT),
+    GSCALAR(rtl_altitude_cm,   "RTL_ALT",     RTL_ALT),
 
     // @Param: RTL_CONE_SLOPE
     // @DisplayName: RTL cone slope
     // @Description: Defines a cone above home which determines maximum climb
-    // @Range: 0.5 10.0
+    // @Range: 0 10.0
     // @Increment: 0.1
     // @Values: 0:Disabled,1:Shallow,3:Steep
     // @User: Standard
@@ -110,7 +110,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 1000
     // @Increment: 1
     // @User: Standard
-    GSCALAR(rtl_alt_final,  "RTL_ALT_FINAL", RTL_ALT_FINAL),
+    GSCALAR(rtl_alt_final_cm,  "RTL_ALT_FINAL", RTL_ALT_FINAL),
 
     // @Param: RTL_CLIMB_MIN
     // @DisplayName: RTL minimum climb
@@ -119,7 +119,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 3000
     // @Increment: 10
     // @User: Standard
-    GSCALAR(rtl_climb_min,  "RTL_CLIMB_MIN",    RTL_CLIMB_MIN_DEFAULT),
+    GSCALAR(rtl_climb_min_cm,  "RTL_CLIMB_MIN",    RTL_CLIMB_MIN_DEFAULT),
 
     // @Param: RTL_LOIT_TIME
     // @DisplayName: RTL loiter time
@@ -173,7 +173,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 30 200
     // @Increment: 10
     // @User: Standard
-    GSCALAR(land_speed,             "LAND_SPEED",   LAND_SPEED),
+    GSCALAR(land_speed_cms,             "LAND_SPEED",   LAND_SPEED),
 
     // @Param: LAND_SPEED_HIGH
     // @DisplayName: Land speed high
@@ -182,7 +182,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 0 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(land_speed_high,        "LAND_SPEED_HIGH",   0),
+    GSCALAR(land_speed_high_cms,        "LAND_SPEED_HIGH",   0),
     
     // @Param: PILOT_SPEED_UP
     // @DisplayName: Pilot maximum vertical speed ascending
@@ -191,7 +191,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_speed_up,     "PILOT_SPEED_UP",   PILOT_VELZ_MAX),
+    GSCALAR(pilot_speed_up_cms,     "PILOT_SPEED_UP",   PILOT_SPEED_UP_DEFAULT),
 
     // @Param: PILOT_ACCEL_Z
     // @DisplayName: Pilot vertical acceleration
@@ -200,7 +200,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @Range: 50 500
     // @Increment: 10
     // @User: Standard
-    GSCALAR(pilot_accel_z,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT),
+    GSCALAR(pilot_accel_d_cmss,  "PILOT_ACCEL_Z",    PILOT_ACCEL_Z_DEFAULT),
 
     // @Param: FS_THR_ENABLE
     // @DisplayName: Throttle Failsafe Enable
@@ -373,7 +373,8 @@ const AP_Param::Info Copter::var_info[] = {
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass, velocity, position and height variances. Used in arming check and EKF failsafe.
-    // @Values: 0.6:Strict, 0.8:Default, 1.0:Relaxed
+    // @Values: 0:Disabled, 0.6:Strict, 0.8:Default, 1.0:Relaxed
+    // @Range: 0.0 1.0
     // @User: Advanced
     GSCALAR(fs_ekf_thresh, "FS_EKF_THRESH",    FS_EKF_THRESHOLD_DEFAULT),
 
@@ -699,9 +700,10 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @Param: WP_NAVALT_MIN
     // @DisplayName: Waypoint navigation altitude minimum
     // @Description: Altitude in meters above which navigation will begin during auto takeoff
+    // @Units: m
     // @Range: 0 5
     // @User: Standard
-    AP_GROUPINFO("WP_NAVALT_MIN", 1, ParametersG2, wp_navalt_min, 0),
+    AP_GROUPINFO("WP_NAVALT_MIN", 1, ParametersG2, wp_navalt_min_m, 0),
 
 #if HAL_BUTTON_ENABLED
     // @Group: BTN_
@@ -825,7 +827,7 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @Range: 0 500
     // @Increment: 10
     // @User: Standard
-    AP_GROUPINFO("PILOT_SPEED_DN", 24, ParametersG2, pilot_speed_dn, 0),
+    AP_GROUPINFO("PILOT_SPEED_DN", 24, ParametersG2, pilot_speed_dn_cms, 0),
 
     // @Param: LAND_ALT_LOW
     // @DisplayName: Land alt low
@@ -834,7 +836,7 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @Range: 100 10000
     // @Increment: 10
     // @User: Advanced
-    AP_GROUPINFO("LAND_ALT_LOW", 25, ParametersG2, land_alt_low, 1000),
+    AP_GROUPINFO("LAND_ALT_LOW", 25, ParametersG2, land_alt_low_cm, 1000),
 
 #if MODE_FLOWHOLD_ENABLED
     // @Group: FHLD
@@ -1299,7 +1301,7 @@ void Copter::load_parameters(void)
 
 #if MODE_RTL_ENABLED
     // PARAMETER_CONVERSION - Added: Sep-2021
-    g.rtl_altitude.convert_parameter_width(AP_PARAM_INT16);
+    g.rtl_altitude_cm.convert_parameter_width(AP_PARAM_INT16);
 #endif
 
     // PARAMETER_CONVERSION - Added: Mar-2022
@@ -1366,7 +1368,7 @@ void Copter::convert_pid_parameters(void)
 {
     const AP_Param::ConversionInfo angle_and_filt_conversion_info[] = {
         // PARAMETER_CONVERSION - Added: Aug-2021
-        { Parameters::k_param_pi_vel_xy, 3, AP_PARAM_FLOAT, "PSC_VELXY_FLTE" },
+        { Parameters::k_param_pi_vel_xy, 3, AP_PARAM_FLOAT, "PSC_NE_VEL_FLTE" },
     };
 
     // convert angle controller gain and filter without scaling
@@ -1384,10 +1386,10 @@ void Copter::convert_pid_parameters(void)
         { "LOIT_SPEED", 3000.0f },
         { "PHLD_BRAKE_ANGLE", 800.0f },
         { "PHLD_BRAKE_RATE", 4.0f },
-        { "PSC_ACCZ_P", 0.28f },
-        { "PSC_VELXY_D", 0.0f },
-        { "PSC_VELXY_I", 0.5f },
-        { "PSC_VELXY_P", 1.0f },
+        { "PSC_D_ACC_P", 0.028f },
+        { "PSC_NE_VEL_D", 0.0f },
+        { "PSC_NE_VEL_I", 0.5f },
+        { "PSC_NE_VEL_P", 1.0f },
         { "RC8_OPTION", 32 },
         { "RC_OPTIONS", 0 },
         { "ATC_RAT_RLL_ILMI", 0.05},

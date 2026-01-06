@@ -55,8 +55,8 @@ bool AP_Arming_Plane::pre_arm_checks(bool display_failure)
         check_failed(display_failure, "System not initialised");
         return false;
     }
-    //are arming checks disabled?
-    if (checks_to_perform == 0) {
+    // are arming checks disabled?
+    if (should_skip_all_checks()) {
         return mandatory_checks(display_failure);
     }
     if (hal.util->was_watchdog_armed()) {
@@ -74,11 +74,6 @@ bool AP_Arming_Plane::pre_arm_checks(bool display_failure)
     // Check airspeed sensor
     ret &= AP_Arming::airspeed_checks(display_failure);
 #endif
-
-    if (plane.g.fs_timeout_long < plane.g.fs_timeout_short && plane.g.fs_action_short != FS_ACTION_SHORT_DISABLED) {
-        check_failed(display_failure, "FS_LONG_TIMEOUT < FS_SHORT_TIMEOUT");
-        ret = false;
-    }
 
     if (plane.aparm.roll_limit < 3) {
         check_failed(display_failure, "ROLL_LIMIT_DEG too small (%.1f)", plane.aparm.roll_limit.get());
@@ -229,6 +224,14 @@ bool AP_Arming_Plane::quadplane_checks(bool display_failure)
         ret = false;
     }
 
+    // combining Q_RTL_MODE with either of the RTL_AUTOLAND options
+    // leads to precedence questions, so just don't allow it:
+    if (plane.g.rtl_autoland != RtlAutoland::RTL_DISABLE &&
+        plane.quadplane.rtl_mode != QuadPlane::RTL_MODE::NONE) {
+        check_failed(Check::PARAMETERS, display_failure, "unset one of RTL_AUTOLAND or Q_RTL_MODE");
+        ret = false;
+    }
+
     return ret;
 }
 #endif // HAL_QUADPLANE_ENABLED
@@ -255,8 +258,8 @@ bool AP_Arming_Plane::ins_checks(bool display_failure)
 bool AP_Arming_Plane::arm_checks(AP_Arming::Method method)
 {
 
-    //are arming checks disabled?
-    if (checks_to_perform == 0) {
+    // are arming checks disabled?
+    if (should_skip_all_checks()) {
         return true;
     }
 

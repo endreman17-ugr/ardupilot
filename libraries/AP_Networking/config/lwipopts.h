@@ -360,6 +360,12 @@ struct netif *ap_networking_routing_hook(const struct ip4_addr *dest);
 
 #if PPP_SUPPORT
 
+// support PPP network capture
+struct pbuf;
+struct ppp_pcb_s;
+void ap_ppp_capture_hook(const struct ppp_pcb_s *pcb, const struct pbuf *pb);
+#define LWIP_PPP_CAPTURE_HOOK ap_ppp_capture_hook
+
 #define NUM_PPP                 1      /* Max PPP sessions. */
 
 
@@ -394,8 +400,13 @@ void sys_check_core_locking(void);
 
 #ifndef LWIP_PLATFORM_ASSERT
 /* Define LWIP_PLATFORM_ASSERT to something to catch missing stdio.h includes */
-void ap_networking_platform_assert(const char *msg, int line, const char *file);
-#define LWIP_PLATFORM_ASSERT(x) ap_networking_platform_assert(x, __LINE__, __FILE__)
+#if CONFIG_HAL_BOARD == HAL_BOARD_SITL || defined(HAL_DEBUG_BUILD)
+void ap_networking_platform_assert(const char *msg, int line);
+#define LWIP_PLATFORM_ASSERT(x) ap_networking_platform_assert(x, __LINE__)
+#else
+void ap_networking_platform_assert(int line);
+#define LWIP_PLATFORM_ASSERT(x) ap_networking_platform_assert(__LINE__)
+#endif
 #endif
 
 /*

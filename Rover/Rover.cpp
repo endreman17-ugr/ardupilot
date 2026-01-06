@@ -172,7 +172,7 @@ bool Rover::set_target_location(const Location& target_loc)
 
 #if AP_SCRIPTING_ENABLED
 // set target velocity (for use by scripting)
-bool Rover::set_target_velocity_NED(const Vector3f& vel_ned)
+bool Rover::set_target_velocity_NED(const Vector3f& vel_ned, bool align_yaw_to_target)
 {
     // exit if vehicle is not in Guided mode or Auto-Guided mode
     if (!control_mode->in_guided_mode()) {
@@ -358,7 +358,7 @@ void Rover::gcs_failsafe_check(void)
     }
 
     // calc time since last gcs update
-    // note: this only looks at the heartbeat from the device id set by gcs().sysid_gcs()
+    // note: this only looks at the heartbeat from the device ids approved by gcs().sysid_is_gcs()
     const uint32_t last_gcs_update_ms = millis() - gcs_last_seen_ms;
     const uint32_t gcs_timeout_ms = uint32_t(constrain_float(g2.fs_gcs_timeout * 1000.0f, 0.0f, UINT32_MAX));
 

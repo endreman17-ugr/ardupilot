@@ -149,7 +149,7 @@ public:
     // is throttle controlled landing descent active?
     bool thr_ctrl_land;
 
-    uint16_t get_pilot_velocity_z_max_dn_cm() const;
+    uint16_t get_pilot_velocity_z_max_dn_m() const;
     
     struct PACKED log_QControl_Tuning {
         LOG_PACKET_HEADER;
@@ -248,7 +248,7 @@ private:
     void hold_stabilize(float throttle_in);
 
     // set climb rate in position controller
-    void set_climb_rate_cms(float target_climb_rate_cms);
+    void set_climb_rate_ms(float target_climb_rate_ms);
 
     // get pilot desired yaw rate in cd/s
     float get_pilot_input_yaw_rate_cds(void) const;
@@ -288,7 +288,7 @@ private:
     void motors_output(bool run_rate_controller = true);
     void Log_Write_QControl_Tuning();
     void log_QPOS(void);
-    float landing_descent_rate_cms(float height_above_ground_m);
+    float landing_descent_rate_ms(float height_above_ground_m);
     
     // setup correct aux channels for frame class
     void setup_default_channels(uint8_t num_motors);
@@ -515,10 +515,10 @@ private:
         uint32_t time_since_state_start_ms() const {
             return AP_HAL::millis() - last_state_change_ms;
         }
-        Vector3p target_neu_cm;
+        Vector3p target_ned_m;
         Vector2f correction_ne_m;
-        Vector3f target_vel_cms;
-        bool slow_descent:1;
+        Vector3f target_vel_ms;
+        bool slow_descent;
         bool pilot_correction_active;
         bool pilot_correction_done;
         uint32_t thrust_loss_start_ms;
@@ -573,7 +573,7 @@ private:
     uint32_t last_pidz_active_ms;
     uint32_t last_pidz_init_ms;
 
-    // throttle scailing for vectored motors in FW flighy
+    // throttle scaling for vectored motors in FW flight
     float FW_vector_throttle_scaling(void);
 
     void afs_terminate(void);
@@ -625,6 +625,12 @@ private:
 
     // AHRS alt for land abort and package place, meters
     float land_descend_start_alt_m;
+
+#if HAL_WITH_ESC_TELEM
+    // optionally block auto takeoff until all motors are spinning as expected
+    AP_Int16 takeoff_rpm_min;
+    AP_Int16 takeoff_rpm_max;
+#endif
 
     // min alt for navigation in takeoff
     AP_Float takeoff_navalt_min_m;
